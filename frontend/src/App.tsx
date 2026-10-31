@@ -9,6 +9,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { MembersPage } from "./pages/MembersPage";
 import { ComingSoon, OverviewPage, ProjectPage } from "./pages/ProjectPage";
 import { ProjectsPage } from "./pages/ProjectsPage";
+import { QuestionBankPage } from "./pages/QuestionBankPage";
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { data: me, isLoading } = useMe();
@@ -40,6 +41,7 @@ export function App() {
           }
         >
           <Route index element={<OverviewPage />} />
+          <Route path="questions" element={<QuestionBankPage />} />
           <Route path="members" element={<MembersPage />} />
           <Route path="audit" element={<AuditPage />} />
           {NAV.filter((n) => n.milestone).map((n) => (

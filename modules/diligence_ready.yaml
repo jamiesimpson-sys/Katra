@@ -1,0 +1,345 @@
+id: diligence_ready
+version: 1
+name: Diligence-ready
+description: >
+  Prepare an owner-operated business for sale. Captures what a buyer's diligence team will
+  ask about customers, pricing, suppliers, staff, operations, financials, legal matters and
+  risks, in the owner's own words and backed by their documents.
+roles: [owner]
+session_length_minutes: 15
+target_sessions: 6
+
+document_types:
+  - { id: financials, name: "Financial statements (P&L, balance sheet)" }
+  - { id: management_accounts, name: "Management accounts / KPIs" }
+  - { id: tax_returns, name: "Tax returns" }
+  - { id: customer_contract, name: "Customer contract" }
+  - { id: customer_list, name: "Customer list / revenue by customer" }
+  - { id: price_list, name: "Price list / rate card" }
+  - { id: supplier_agreement, name: "Supplier or vendor agreement" }
+  - { id: employment_contract, name: "Employment or contractor agreement" }
+  - { id: org_chart, name: "Org chart / staff list" }
+  - { id: sop, name: "Standard operating procedure" }
+  - { id: lease, name: "Property lease" }
+  - { id: insurance, name: "Insurance policy" }
+  - { id: legal, name: "Other legal document (licences, IP, disputes)" }
+
+sections:
+  - id: customers
+    name: Customers
+    description: Who buys, how concentrated revenue is, and how durable the relationships are.
+    questions:
+      - id: cust_top_customers
+        text: Who are your largest customers, and roughly what share of revenue does each represent?
+        priority: high
+        related_document_types: [customer_list, financials]
+        follow_up_hints:
+          - Ask whether any single customer is more than 15% of revenue.
+          - Ask how long each of the top customers has been with the business.
+      - id: cust_contract_terms
+        text: Which customers are on written contracts, and what are the term, renewal and notice periods?
+        priority: high
+        related_document_types: [customer_contract]
+        follow_up_hints:
+          - Ask which contracts are month-to-month or verbal.
+          - Ask about upcoming renewal dates in the next 12 months.
+      - id: cust_change_of_control
+        text: Do any customer contracts have change-of-control, assignment or termination-for-convenience clauses?
+        priority: high
+        related_document_types: [customer_contract]
+        follow_up_hints:
+          - If a document mentions such a clause, quote it and ask how it would be handled in a sale.
+      - id: cust_churn
+        text: Which customers have you lost in the last two to three years, and why did they leave?
+        priority: medium
+        related_document_types: [customer_list]
+        follow_up_hints:
+          - Ask what the business changed as a result.
+      - id: cust_acquisition
+        text: How do new customers usually find you, and how long does it take to win one?
+        priority: medium
+        follow_up_hints:
+          - Ask whether new business depends on the owner personally.
+      - id: cust_owner_relationships
+        text: Which customer relationships depend on you personally, and who else in the business knows those customers well?
+        priority: high
+        follow_up_hints:
+          - Ask what a handover to a new owner would look like for each key account.
+
+  - id: pricing
+    name: Pricing
+    description: How prices are set, how they have changed, and what margin they produce.
+    questions:
+      - id: price_model
+        text: How do you price your services? For example fixed monthly fees, per-user, hourly or project-based.
+        priority: high
+        related_document_types: [price_list, customer_contract]
+        follow_up_hints:
+          - Ask what share of revenue is recurring versus one-off.
+      - id: price_history
+        text: When did you last raise prices, by how much, and how did customers react?
+        priority: high
+        follow_up_hints:
+          - Ask whether any customers are on legacy pricing well below current rates.
+      - id: price_discounts
+        text: Which customers get discounts or non-standard terms, and why?
+        priority: medium
+        related_document_types: [customer_contract, price_list]
+      - id: price_competitors
+        text: How do your prices compare with your main competitors?
+        priority: medium
+        follow_up_hints:
+          - Ask which competitors customers most often compare you with.
+      - id: price_margin
+        text: Which services or customers are most and least profitable?
+        priority: medium
+        related_document_types: [management_accounts]
+      - id: price_escalation
+        text: Do your contracts allow you to pass on cost increases, such as inflation or supplier price rises?
+        priority: low
+        related_document_types: [customer_contract]
+
+  - id: suppliers
+    name: Suppliers
+    description: Who the business depends on, on what terms, and how easily they could be replaced.
+    questions:
+      - id: supp_key_suppliers
+        text: Who are your most important suppliers or vendors, and what do you buy from each?
+        priority: high
+        related_document_types: [supplier_agreement, financials]
+      - id: supp_terms
+        text: What are the key terms of your main supplier agreements, such as length, pricing, minimum commitments and notice?
+        priority: high
+        related_document_types: [supplier_agreement]
+        follow_up_hints:
+          - Ask about any minimum spend or volume commitments.
+      - id: supp_dependency
+        text: If your most important supplier stopped working with you, what would happen and how quickly could you switch?
+        priority: high
+        follow_up_hints:
+          - Ask whether any supplier is a single point of failure.
+      - id: supp_partner_status
+        text: Do you hold partner status, certifications or special pricing with any vendor, and what does it take to keep it?
+        priority: medium
+        related_document_types: [supplier_agreement]
+      - id: supp_assignment
+        text: Can your supplier agreements be transferred to a new owner, or would they need renegotiating?
+        priority: medium
+        related_document_types: [supplier_agreement]
+      - id: supp_disputes
+        text: Have you had any disputes, billing problems or service failures with suppliers in the last few years?
+        priority: low
+
+  - id: staff
+    name: Staff
+    description: The team, key people, pay and the risks of people leaving.
+    questions:
+      - id: staff_structure
+        text: How is the team organised, and who does what?
+        priority: high
+        related_document_types: [org_chart]
+        follow_up_hints:
+          - Ask how many are employees versus contractors.
+      - id: staff_key_people
+        text: Who are the key people the business could not easily run without, and how would you replace them?
+        priority: high
+        related_document_types: [org_chart, employment_contract]
+        follow_up_hints:
+          - Ask whether key people know about the planned sale.
+      - id: staff_owner_role
+        text: What do you personally do each week, and which of those tasks could someone else take over today?
+        priority: high
+        follow_up_hints:
+          - Ask how long the business could run without the owner.
+      - id: staff_contracts
+        text: Do all staff have written contracts, and do they include notice periods, restrictive covenants and IP assignment?
+        priority: medium
+        related_document_types: [employment_contract]
+      - id: staff_pay
+        text: How does your pay compare with the market, and are there any bonuses, commissions or promises not in writing?
+        priority: medium
+        follow_up_hints:
+          - Ask about any equity, profit-share or retention promises.
+      - id: staff_turnover
+        text: How many people have left in the last two years, and why?
+        priority: low
+
+  - id: operations
+    name: Operations
+    description: How the work actually gets done, and how much of it is documented.
+    questions:
+      - id: ops_service_delivery
+        text: Walk me through how you deliver your core service, from a customer request to the work being done.
+        priority: high
+        related_document_types: [sop]
+      - id: ops_documentation
+        text: Which processes are written down, and which live only in people's heads?
+        priority: high
+        related_document_types: [sop]
+        follow_up_hints:
+          - Ask which undocumented process would hurt most if the person who knows it left.
+      - id: ops_systems
+        text: What software and tools does the business run on, and who owns the accounts and licences?
+        priority: medium
+        follow_up_hints:
+          - Ask whether any systems are in the owner's personal name.
+      - id: ops_kpis
+        text: Which numbers do you watch to know the business is running well, such as response times, utilisation or customer satisfaction?
+        priority: medium
+        related_document_types: [management_accounts]
+      - id: ops_capacity
+        text: How close is the team to full capacity, and what would it take to grow by a third?
+        priority: medium
+      - id: ops_premises
+        text: Where does the business operate from, and what are the terms of any lease?
+        priority: low
+        related_document_types: [lease]
+
+  - id: financials
+    name: Financials
+    description: Revenue, profit, cash and the adjustments a buyer will look for.
+    questions:
+      - id: fin_revenue_trend
+        text: How have revenue and profit moved over the last three years, and what drove the changes?
+        priority: high
+        related_document_types: [financials, management_accounts]
+        follow_up_hints:
+          - If the P&L shows a large change in a year, ask about it specifically.
+      - id: fin_recurring_revenue
+        text: How much of your revenue is recurring or contracted, and how predictable is it month to month?
+        priority: high
+        related_document_types: [financials, customer_contract]
+      - id: fin_addbacks
+        text: Are there any owner costs, one-off expenses or unusual items in the accounts that a buyer should adjust for?
+        priority: high
+        related_document_types: [financials]
+        follow_up_hints:
+          - Ask about owner salary versus a market rate for the role.
+          - Ask about personal expenses run through the business.
+      - id: fin_working_capital
+        text: How quickly do customers pay you, and are there any overdue debts or cash-flow pressures?
+        priority: medium
+        related_document_types: [management_accounts]
+      - id: fin_debt
+        text: Does the business have any loans, overdrafts, leases on equipment or guarantees?
+        priority: medium
+        related_document_types: [financials]
+      - id: fin_tax
+        text: Are all tax filings up to date, and are there any open queries or disputes with the tax authorities?
+        priority: medium
+        related_document_types: [tax_returns]
+
+  - id: legal
+    name: Legal
+    description: Structure, contracts, compliance and anything that could surface in legal diligence.
+    questions:
+      - id: legal_structure
+        text: How is the business legally structured, and who owns the shares?
+        priority: high
+        follow_up_hints:
+          - Ask about any shareholder agreements or options granted.
+      - id: legal_disputes
+        text: Are there any current, past or threatened legal disputes, claims or complaints?
+        priority: high
+        related_document_types: [legal]
+      - id: legal_ip
+        text: Who owns the intellectual property the business uses, such as software, branding, domains and documentation?
+        priority: medium
+        related_document_types: [legal, employment_contract]
+      - id: legal_data_protection
+        text: What customer or personal data do you hold, and how do you meet data protection obligations?
+        priority: medium
+        follow_up_hints:
+          - Ask whether there have been any data breaches or security incidents.
+      - id: legal_licences
+        text: Does the business need any licences, accreditations or insurances to operate, and are they current?
+        priority: medium
+        related_document_types: [insurance, legal]
+      - id: legal_related_parties
+        text: Are there any arrangements with family members, related companies or yourself personally, such as property, loans or services?
+        priority: low
+
+  - id: risks
+    name: Risks
+    description: What could go wrong, and what the owner knows that a buyer might not.
+    questions:
+      - id: risk_biggest
+        text: What do you see as the biggest risks to the business over the next two years?
+        priority: high
+      - id: risk_concentration
+        text: Is there anything the business depends on too heavily, such as a customer, supplier, person or channel?
+        priority: high
+      - id: risk_market
+        text: How is your market changing, and how is the business positioned for that?
+        priority: medium
+      - id: risk_incidents
+        text: Have there been any serious incidents, outages or service failures, and how were they handled?
+        priority: medium
+        related_document_types: [sop, insurance]
+      - id: risk_buyer_surprises
+        text: Is there anything a buyer might discover during diligence that you would rather explain upfront?
+        priority: high
+        follow_up_hints:
+          - Reassure the owner that disclosing early usually builds trust with buyers.
+      - id: risk_transition
+        text: After a sale, how long would you be willing to stay on, and in what role?
+        priority: medium
+
+coverage_rules:
+  question_answered_when: approved_item
+  section_complete_when:
+    high_priority_answered: 1.0
+    medium_priority_answered: 0.5
+    low_priority_answered: 0.0
+  overrides:
+    legal:
+      medium_priority_answered: 1.0
+
+outputs:
+  - id: diligence_report
+    name: Diligence report
+    format: markdown
+    template: |
+      # {{ project.name }}: Diligence Report
+
+      Generated {{ generated_at }} · Coverage {{ coverage.percent }}% ({{ coverage.answered }} of {{ coverage.total }} questions answered)
+
+      Every statement below is the owner's own verified answer, with a reference to its source.
+      Open gaps are listed per section and in full at the end.
+
+      {% for section in sections %}
+      ## {{ section.name }}
+
+      {% if section.narrative %}
+      {{ section.narrative }}
+      {% else %}
+      _No verified answers yet._
+      {% endif %}
+
+      {% if section.flags %}
+      **Unresolved contradictions:**
+      {% for flag in section.flags %}
+      - {{ flag.explanation }}
+      {% endfor %}
+      {% endif %}
+      {% if section.gaps %}
+      **Open gaps:**
+      {% for gap in section.gaps %}
+      - {{ gap.text }}
+      {% endfor %}
+      {% endif %}
+
+      {% endfor %}
+      ## All open gaps
+
+      {% for gap in gaps %}
+      - {{ gap.text }}
+      {% else %}
+      None.
+      {% endfor %}
+
+      ## Sources
+
+      {% for s in sources %}
+      - [{{ s.ref }}] {{ s.label }}
+      {% endfor %}

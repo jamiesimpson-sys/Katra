@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException, Request, status
 from sqlalchemy import select
 
 from katra.auth.deps import AdminOnly, AnyMember, AuthedUser, DbSession, StaffUser
+from katra.engine.modules import Module, get_registry
 from katra.models import AuditLog, Invite, Project, ProjectMember, Role, User
 from katra.models.base import utcnow
 from katra.schemas.common import (
@@ -19,6 +20,7 @@ from katra.schemas.common import (
 )
 from katra.services import audit
 from katra.services.invites import create_invite, invite_url
+from katra.services.modules import module_for_project
 
 router = APIRouter(prefix="/api/projects", tags=["projects"])
 
@@ -40,7 +42,16 @@ def list_projects(current: AuthedUser, db: DbSession) -> list[ProjectWithRole]:
 def create_project(
     body: ProjectIn, current: StaffUser, request: Request, db: DbSession
 ) -> ProjectWithRole:
-    project = Project(name=body.name, module_id=body.module_id, retention_days=body.retention_days)
+    module = get_registry().get(body.module_id)
+    if module is None:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "Unknown module")
+    project = Project(
+        name=body.name,
+        module_id=module.id,
+        module_version=module.version,
+        module_snapshot=module.model_dump(mode="json"),
+        retention_days=body.retention_days,
+    )
     db.add(project)
     db.flush()
     db.add(ProjectMember(project_id=project.id, user_id=current.id, role=Role.ADMIN))
@@ -51,7 +62,7 @@ def create_project(
         project_id=project.id,
         target_type="project",
         target_id=project.id,
-        details={"module_id": body.module_id},
+        details={"module_id": module.id, "module_version": module.version},
         request=request,
     )
     db.commit()
@@ -71,6 +82,12 @@ def get_project(ctx: AnyMember, request: Request, db: DbSession) -> ProjectWithR
     )
     db.commit()
     return ProjectWithRole(**ProjectOut.model_validate(ctx.project).model_dump(), role=ctx.role)
+
+
+@router.get("/{project_id}/module", response_model=Module)
+def get_project_module(ctx: AnyMember) -> Module:
+    """The question bank and rules this project runs on (read-only)."""
+    return module_for_project(ctx.project)
 
 
 @router.get("/{project_id}/members", response_model=list[MemberOut])

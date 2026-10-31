@@ -14,7 +14,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     UV_PROJECT_ENVIRONMENT=/opt/venv \
     PATH="/opt/venv/bin:$PATH" \
-    KATRA_STATIC_DIR=/app/static
+    KATRA_STATIC_DIR=/app/static \
+    KATRA_MODULES_DIR=/app/modules
 
 RUN pip install --no-cache-dir uv==0.11.32 \
     && useradd --create-home --uid 1000 katra
@@ -24,6 +25,7 @@ COPY backend/pyproject.toml backend/uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project
 COPY backend/alembic.ini ./
 COPY backend/katra ./katra
+COPY modules ./modules
 RUN uv sync --frozen --no-dev
 COPY --from=frontend /app/dist ./static
 

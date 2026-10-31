@@ -1,7 +1,9 @@
 import enum
 import uuid
+from typing import Any
 
 from sqlalchemy import ForeignKey, Integer, LargeBinary, String
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from katra.models.base import Base, CreatedAtMixin, IdMixin, str_enum
@@ -18,6 +20,9 @@ class Project(IdMixin, CreatedAtMixin, Base):
     name: Mapped[str] = mapped_column(String(200))
     module_id: Mapped[str] = mapped_column(String(100))
     module_version: Mapped[int] = mapped_column(Integer, default=1)
+    # Copy of the module definition taken at creation, so later edits to the module file
+    # never change an in-flight project.
+    module_snapshot: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
     status: Mapped[ProjectStatus] = mapped_column(
         str_enum(ProjectStatus, "project_status"), default=ProjectStatus.ACTIVE
     )

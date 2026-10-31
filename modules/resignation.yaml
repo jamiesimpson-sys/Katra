@@ -1,0 +1,67 @@
+id: resignation
+version: 1
+name: Key-person handover
+description: >
+  Capture what a departing employee knows before they leave: responsibilities,
+  relationships, systems and work in progress. A minimal second module showing that new
+  workflows need only a config file.
+roles: [departing_employee]
+session_length_minutes: 15
+target_sessions: 2
+
+document_types:
+  - { id: job_description, name: Job description }
+  - { id: sop, name: Process documentation }
+
+sections:
+  - id: responsibilities
+    name: Responsibilities
+    questions:
+      - id: resp_weekly
+        text: What do you do in a typical week, including the things that aren't in your job description?
+        priority: high
+        related_document_types: [job_description]
+      - id: resp_periodic
+        text: What tasks come up only monthly, quarterly or yearly, and when are the next ones due?
+        priority: high
+  - id: relationships
+    name: Relationships
+    questions:
+      - id: rel_contacts
+        text: Which customers, suppliers or colleagues rely on you directly, and who should they talk to after you leave?
+        priority: high
+  - id: systems
+    name: Systems and access
+    questions:
+      - id: sys_access
+        text: Which systems, accounts and passwords do you hold that someone else will need?
+        priority: high
+      - id: sys_quirks
+        text: Which tools or processes have workarounds or quirks that only you know about?
+        priority: medium
+        related_document_types: [sop]
+  - id: in_flight
+    name: Work in progress
+    questions:
+      - id: wip_open
+        text: What work is in progress, what state is it in, and what are the next steps?
+        priority: high
+
+outputs:
+  - id: handover_note
+    name: Handover note
+    template: |
+      # Handover: {{ project.name }}
+
+      Generated {{ generated_at }} · Coverage {{ coverage.percent }}%
+
+      {% for section in sections %}
+      ## {{ section.name }}
+
+      {{ section.narrative or "_Nothing verified yet._" }}
+
+      {% for gap in section.gaps %}
+      - Still to capture: {{ gap.text }}
+      {% endfor %}
+
+      {% endfor %}

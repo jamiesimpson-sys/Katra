@@ -8,9 +8,10 @@ from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.responses import FileResponse
 from sqlalchemy import text
 
-from katra.api import auth, invites, projects
+from katra.api import auth, invites, modules, projects
 from katra.config import get_settings
 from katra.db.session import get_sessionmaker
+from katra.engine.modules import get_registry
 from katra.services.users import bootstrap_admin
 
 log = logging.getLogger("katra")
@@ -24,6 +25,8 @@ SPA_CSP = (
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     settings = get_settings()
+    # Fail fast (with file and field names) if any module file is invalid.
+    log.info("Loaded modules: %s", ", ".join(m.id for m in get_registry().all()))
     password = settings.bootstrap_admin_password
     with get_sessionmaker()() as db:
         user = bootstrap_admin(
@@ -62,6 +65,7 @@ def create_app() -> FastAPI:
 
     app.include_router(auth.router)
     app.include_router(invites.router)
+    app.include_router(modules.router)
     app.include_router(projects.router)
 
     static_dir = get_settings().static_dir

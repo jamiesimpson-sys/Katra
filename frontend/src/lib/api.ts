@@ -92,3 +92,44 @@ export interface AuditEntry {
   ip: string | null;
   created_at: string;
 }
+
+export interface ModuleSummary {
+  id: string;
+  version: number;
+  name: string;
+  description: string;
+  roles: string[];
+  section_count: number;
+  question_count: number;
+  session_length_minutes: number;
+  target_sessions: number;
+}
+
+export type Priority = "high" | "medium" | "low";
+
+export interface ModuleQuestion {
+  id: string;
+  text: string;
+  follow_up_hints: string[];
+  related_document_types: string[];
+  priority: Priority;
+}
+
+export interface ModuleSection {
+  id: string;
+  name: string;
+  description: string;
+  questions: ModuleQuestion[];
+}
+
+export interface ModuleDef {
+  id: string;
+  version: number;
+  name: string;
+  description: string;
+  roles: string[];
+  session_length_minutes: number;
+  target_sessions: number;
+  sections: ModuleSection[];
+  document_types: { id: string; name: string }[];
+}

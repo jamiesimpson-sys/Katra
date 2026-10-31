@@ -1,4 +1,5 @@
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -27,6 +28,9 @@ class Settings(BaseSettings):
     # Created on startup when the database has no users yet.
     bootstrap_admin_email: str | None = None
     bootstrap_admin_password: SecretStr | None = None
+
+    # Workflow module files (*.yaml / *.json). Defaults to the repo's modules/ folder.
+    modules_dir: str = str(Path(__file__).resolve().parents[2] / "modules")
 
     llm_provider: str = "fake"
     embedding_provider: str = "fake"

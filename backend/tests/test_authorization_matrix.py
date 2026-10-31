@@ -13,6 +13,7 @@ ALL = {ADMIN, OWNER, VIEWER}
 # (method, path template, body, roles allowed)
 ENDPOINTS = [
     ("GET", "/api/projects/{pid}", None, ALL),
+    ("GET", "/api/projects/{pid}/module", None, ALL),
     ("GET", "/api/projects/{pid}/members", None, {ADMIN}),
     ("DELETE", "/api/projects/{pid}/members/{rid}", None, {ADMIN}),
     ("GET", "/api/projects/{pid}/invites", None, {ADMIN}),

@@ -11,6 +11,7 @@ export interface NavItem {
 // The single source of truth for what each role can see. The API enforces the same rules.
 export const NAV: NavItem[] = [
   { path: "", label: "Overview", roles: ["admin", "owner", "viewer"] },
+  { path: "questions", label: "Question bank", roles: ["admin", "owner"] },
   { path: "documents", label: "Documents", roles: ["admin", "owner"], milestone: "M3" },
   { path: "interview", label: "Interview", roles: ["owner"], milestone: "M4" },
   { path: "verify", label: "Verify answers", roles: ["owner"], milestone: "M5" },

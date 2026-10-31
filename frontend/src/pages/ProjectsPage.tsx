@@ -1,15 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
-import { Button, Card, ErrorText, Field, Input, RoleBadge } from "../components/ui";
-import { api, type Project } from "../lib/api";
+import { Button, Card, ErrorText, Field, Input, RoleBadge, Select } from "../components/ui";
+import { api, type ModuleSummary, type Project } from "../lib/api";
 import { useMe } from "../lib/auth";
 
 function CreateProject() {
   const qc = useQueryClient();
   const [name, setName] = useState("");
-  // The module picker arrives with the module loader in M2.
-  const [moduleId, setModuleId] = useState("diligence_ready");
+  const modules = useQuery({ queryKey: ["modules"], queryFn: () => api<ModuleSummary[]>("/api/modules") });
+  const [moduleId, setModuleId] = useState("");
+  useEffect(() => {
+    if (!moduleId && modules.data?.length) setModuleId(modules.data[0].id);
+  }, [moduleId, modules.data]);
+  const selected = modules.data?.find((m) => m.id === moduleId);
   const create = useMutation({
     mutationFn: () => api<Project>("/api/projects", { method: "POST", body: { name, module_id: moduleId } }),
     onSuccess: () => {
@@ -30,12 +34,27 @@ function CreateProject() {
           <Input value={name} onChange={(e) => setName(e.target.value)} required />
         </Field>
         <Field label="Module">
-          <Input value={moduleId} onChange={(e) => setModuleId(e.target.value)} required />
+          <Select value={moduleId} onChange={(e) => setModuleId(e.target.value)} required>
+            {modules.data?.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.name}
+              </option>
+            ))}
+          </Select>
         </Field>
-        <Button type="submit" disabled={create.isPending}>
+        <Button type="submit" disabled={create.isPending || !moduleId}>
           Create
         </Button>
       </form>
+      {selected && (
+        <p className="mt-3 text-sm text-slate-600">
+          {selected.description} <span className="text-slate-500">
+            {selected.section_count} sections · {selected.question_count} questions · {selected.target_sessions} ×{" "}
+            {selected.session_length_minutes}-minute sessions
+          </span>
+        </p>
+      )}
+      <ErrorText error={modules.error} />
       <ErrorText error={create.error} />
     </Card>
   );

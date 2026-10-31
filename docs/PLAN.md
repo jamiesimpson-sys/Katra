@@ -1,6 +1,6 @@
 # Katra Prototype — Architecture & Development Plan
 
-Status: **approved** (decisions recorded in §10). M1 complete; see `docs/milestones/`.
+Status: **approved** (decisions recorded in §10). M1–M2 complete; see `docs/milestones/`.
 Source brief: [`docs/SPEC.md`](./SPEC.md)
 
 This document proposes the architecture, key design decisions, data model and a
@@ -431,6 +431,7 @@ Agreed at the plan review (all recommendations accepted):
 Decisions made during the build:
 
 - **Who can create projects:** a `users.is_staff` flag (Jamie, brokers). Project roles stay per project in `project_members`. The first staff user is created from `.env` on first start, or with `python -m katra.cli create-admin`.
+- **Module pinning:** projects store a full snapshot of their module (`projects.module_snapshot`) rather than just a version number, so module files can be edited freely.
 - **Services:** the SPA is served by the same Caddy container that terminates TLS (`web`), so Compose runs four services: `web`, `api`, `worker` and `db`.
 
 ## 11. Risks

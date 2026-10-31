@@ -5,6 +5,7 @@ x-backend-env: &backend-env
   KATRA_PUBLIC_BASE_URL: https://localhost:${KATRA_HTTPS_PORT:-8443}
   KATRA_BOOTSTRAP_ADMIN_EMAIL: ${KATRA_BOOTSTRAP_ADMIN_EMAIL:-}
   KATRA_BOOTSTRAP_ADMIN_PASSWORD: ${KATRA_BOOTSTRAP_ADMIN_PASSWORD:-}
+  KATRA_MODULES_DIR: /app/modules
   KATRA_LLM_PROVIDER: ${KATRA_LLM_PROVIDER:-fake}
   KATRA_EMBEDDING_PROVIDER: ${KATRA_EMBEDDING_PROVIDER:-fake}
   ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
@@ -29,6 +30,8 @@ services:
     image: katra-backend
     build: ./backend
     environment: *backend-env
+    volumes:
+      - ./modules:/app/modules:ro  # add a module file, then `docker compose restart api`
     depends_on:
       db:
         condition: service_healthy
@@ -43,6 +46,8 @@ services:
     image: katra-backend  # built by the api service
     command: ["python", "-m", "katra.jobs.worker"]
     environment: *backend-env
+    volumes:
+      - ./modules:/app/modules:ro
     depends_on:
       api:
         condition: service_healthy  # the api runs migrations on start
