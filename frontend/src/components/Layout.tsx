@@ -30,9 +30,9 @@ export function Layout() {
           {me && (
             <div className="flex items-center gap-4 text-sm text-slate-600">
               {me.user.is_superuser && (
-                // A full page load: /admin is served by the backend, not the SPA.
-                <a href="/admin/" className="hover:text-slate-900">
-                  Admin
+                // A full page load in a new tab: /admin is served by the backend, not the SPA.
+                <a href="/admin/" target="_blank" rel="noopener noreferrer" className="hover:text-slate-900">
+                  Admin ↗
                 </a>
               )}
               <span>{me.user.email}</span>
