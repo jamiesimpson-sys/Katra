@@ -33,7 +33,7 @@ warning once. `make down` stops the stack; `docker compose down -v` also deletes
 This creates one web service (API, frontend and background worker in one container) and a Postgres database. Render provides HTTPS. Notes on the free plan:
 - The service sleeps after about 15 minutes idle, so the first visit afterwards takes up to about a minute.
 - Free databases expire after 30 days. Switch both `plan:` values to paid ones for anything longer-lived.
-- Every push to the default branch redeploys.
+- Every push to the default branch redeploys. The app footer shows the live commit, and Render can email you when a deploy finishes (workspace **Settings → Notifications**).
 
 ## Admin data browser
 
