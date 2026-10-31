@@ -1,6 +1,6 @@
 # Katra Prototype — Architecture & Development Plan
 
-Status: **proposal, for review before any code is written**
+Status: **approved** (decisions recorded in §10). M1 complete; see `docs/milestones/`.
 Source brief: [`docs/SPEC.md`](./SPEC.md)
 
 This document proposes the architecture, key design decisions, data model and a
@@ -416,17 +416,22 @@ grows with each milestone** rather than arriving at the end.
 
 ---
 
-## 10. Open questions for review
+## 10. Decisions
 
-1. **Frontend:** OK to use a Vite React SPA instead of Next.js? (Recommended: yes.)
-2. **"Edited" status:** treat owner-edited items as verified? (Recommended: yes. The original claim and quote are kept, and the report shows the edited text.)
-3. **Viewer document access:** may buyers open the source documents behind citations, or only see the claim and quote? (Recommended: claim and quote only; admin can enable per project later.)
-4. **Embeddings:** local `fastembed` by default, or Voyage AI? (Recommended: local.)
-5. **Invites:** show the invite link in the UI for the prototype, rather than sending email? (Recommended: yes, since email is out of scope.)
-6. **Who can generate reports:** admin only, or the owner too? (Spec says admin; recommended: admin only.)
-7. **Model choice and data terms:** confirm an Anthropic API key and whether zero data retention will be requested for demos with real owner data.
+Agreed at the plan review (all recommendations accepted):
 
----
+1. **Frontend:** Vite React SPA, not Next.js.
+2. **"Edited" status:** owner-edited items count as verified. The original claim and quote are kept, and the report shows the edited text.
+3. **Viewer document access:** buyers see the claim and quote only, not the raw source documents.
+4. **Embeddings:** local `fastembed` by default (Voyage AI stays a drop-in option).
+5. **Invites:** the invite link is shown once in the admin UI; no email is sent.
+6. **Report generation:** admins only.
+7. **Model and data terms:** still open. An Anthropic API key is needed from M4. Zero data retention is to be requested before demos that use real owner data. Until then everything runs on the `fake` providers.
+
+Decisions made during the build:
+
+- **Who can create projects:** a `users.is_staff` flag (Jamie, brokers). Project roles stay per project in `project_members`. The first staff user is created from `.env` on first start, or with `python -m katra.cli create-admin`.
+- **Services:** the SPA is served by the same Caddy container that terminates TLS (`web`), so Compose runs four services: `web`, `api`, `worker` and `db`.
 
 ## 11. Risks
 

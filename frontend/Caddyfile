@@ -1,0 +1,29 @@
+{
+	# Local CA for HTTPS on localhost. Use a real domain + ACME (or your own certs) when deployed.
+	local_certs
+	skip_install_trust
+	auto_https disable_redirects
+}
+
+{$KATRA_SITE_ADDRESS:localhost} {
+	encode gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy same-origin
+		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'"
+		-Server
+	}
+
+	handle /api/* {
+		reverse_proxy api:8000
+	}
+
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}

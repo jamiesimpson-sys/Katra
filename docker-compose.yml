@@ -1,0 +1,65 @@
+name: katra
+
+x-backend-env: &backend-env
+  KATRA_DATABASE_URL: postgresql+psycopg://katra:${POSTGRES_PASSWORD:?run `make env` first}@db:5432/katra
+  KATRA_PUBLIC_BASE_URL: https://localhost:${KATRA_HTTPS_PORT:-8443}
+  KATRA_BOOTSTRAP_ADMIN_EMAIL: ${KATRA_BOOTSTRAP_ADMIN_EMAIL:-}
+  KATRA_BOOTSTRAP_ADMIN_PASSWORD: ${KATRA_BOOTSTRAP_ADMIN_PASSWORD:-}
+  KATRA_LLM_PROVIDER: ${KATRA_LLM_PROVIDER:-fake}
+  KATRA_EMBEDDING_PROVIDER: ${KATRA_EMBEDDING_PROVIDER:-fake}
+  ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: katra
+      POSTGRES_DB: katra
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?run `make env` first}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U katra -d katra"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+
+  api:
+    image: katra-backend
+    build: ./backend
+    environment: *backend-env
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+    restart: unless-stopped
+
+  worker:
+    image: katra-backend  # built by the api service
+    command: ["python", "-m", "katra.jobs.worker"]
+    environment: *backend-env
+    depends_on:
+      api:
+        condition: service_healthy  # the api runs migrations on start
+    restart: unless-stopped
+
+  web:
+    image: katra-web
+    build: ./frontend
+    ports:
+      - "${KATRA_HTTPS_PORT:-8443}:443"
+    depends_on:
+      api:
+        condition: service_healthy
+    volumes:
+      - caddy_data:/data
+    restart: unless-stopped
+
+volumes:
+  db_data:
+  caddy_data:
