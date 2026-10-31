@@ -29,6 +29,12 @@ export function Layout() {
           </Link>
           {me && (
             <div className="flex items-center gap-4 text-sm text-slate-600">
+              {me.user.is_superuser && (
+                // A full page load: /admin is served by the backend, not the SPA.
+                <a href="/admin/" className="hover:text-slate-900">
+                  Admin
+                </a>
+              )}
               <span>{me.user.email}</span>
               <button className="hover:text-slate-900" onClick={() => logout.mutate()}>
                 Sign out

@@ -40,6 +40,7 @@ export interface User {
   email: string;
   display_name: string;
   is_staff: boolean;
+  is_superuser: boolean;
 }
 
 export interface Me {

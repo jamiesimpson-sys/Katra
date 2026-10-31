@@ -8,17 +8,23 @@ from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.responses import FileResponse
 from sqlalchemy import text
 
+from katra.admin import mount_admin
 from katra.api import auth, invites, modules, projects
 from katra.config import get_settings
 from katra.db.session import get_sessionmaker
 from katra.engine.modules import get_registry
-from katra.services.users import bootstrap_admin
+from katra.services.users import bootstrap_admin, ensure_superuser
 
 log = logging.getLogger("katra")
 
 SPA_CSP = (
     "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; "
     "frame-ancestors 'none'"
+)
+# SQLAdmin's pages use inline scripts.
+ADMIN_CSP = (
+    "default-src 'self'; img-src 'self' data:; script-src 'self' 'unsafe-inline'; "
+    "style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-ancestors 'none'"
 )
 
 
@@ -34,6 +40,8 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         )
         if user:
             log.warning("Created bootstrap admin %s", user.email)
+        if ensure_superuser(db, settings.bootstrap_admin_email):
+            log.warning("Granted superuser to %s", settings.bootstrap_admin_email)
     yield
 
 
@@ -52,6 +60,9 @@ def create_app() -> FastAPI:
             response.headers.setdefault("Strict-Transport-Security", "max-age=31536000")
         if request.url.path.startswith("/api/"):
             response.headers.setdefault("Cache-Control", "no-store")
+        elif request.url.path.startswith("/admin"):
+            response.headers.setdefault("Cache-Control", "no-store")
+            response.headers.setdefault("Content-Security-Policy", ADMIN_CSP)
         else:
             response.headers.setdefault("Content-Security-Policy", SPA_CSP)
         return response
@@ -67,6 +78,8 @@ def create_app() -> FastAPI:
     app.include_router(invites.router)
     app.include_router(modules.router)
     app.include_router(projects.router)
+
+    mount_admin(app)  # before the SPA catch-all route
 
     static_dir = get_settings().static_dir
     if static_dir:

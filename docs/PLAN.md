@@ -1,6 +1,6 @@
 # Katra Prototype — Architecture & Development Plan
 
-Status: **approved** (decisions recorded in §10). M1–M2 complete; see `docs/milestones/`.
+Status: **approved** (decisions recorded in §10). M1, M2 and M2.5 (admin data browser) complete; see `docs/milestones/`.
 Source brief: [`docs/SPEC.md`](./SPEC.md)
 
 This document proposes the architecture, key design decisions, data model and a

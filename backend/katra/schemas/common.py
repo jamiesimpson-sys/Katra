@@ -16,6 +16,7 @@ class UserOut(ORMModel):
     email: str
     display_name: str
     is_staff: bool
+    is_superuser: bool
 
 
 class LoginIn(BaseModel):

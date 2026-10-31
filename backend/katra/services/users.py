@@ -30,3 +30,24 @@ def bootstrap_admin(db: Session, email: str | None, password: str | None) -> Use
     user = create_staff_user(db, email, password, display_name="Admin")
     db.commit()
     return user
+
+
+def ensure_superuser(db: Session, email: str | None) -> bool:
+    """Make the bootstrap admin a superuser. Returns True if the flag was newly set."""
+    if not email:
+        return False
+    user = db.scalar(select(User).where(func.lower(User.email) == email.lower()))
+    if user is None or user.is_superuser:
+        return False
+    user.is_superuser = True
+    db.commit()
+    return True
+
+
+def set_superuser(db: Session, email: str, value: bool) -> User:
+    user = db.scalar(select(User).where(func.lower(User.email) == email.lower()))
+    if user is None:
+        raise ValueError(f"No user with email {email}")
+    user.is_superuser = value
+    db.flush()
+    return user

@@ -25,7 +25,10 @@ the system produces a sourced diligence report and a Q&A assistant.
    - Customer data is never sent anywhere except through the provider interfaces.
 5. **Modules are data.** No module ids or question ids in application code. A new
    workflow must work by adding a YAML file to `modules/`.
-6. **Interfaces for portability.** LLM, embeddings, storage and parsers are accessed
+6. **The /admin browser stays read-only for anything that carries the hard rules.** Never make
+   knowledge items, transcripts, reports or the audit log editable there, and never show secret
+   columns (`katra/admin.py`).
+7. **Interfaces for portability.** LLM, embeddings, storage and parsers are accessed
    through `katra/providers/*` only.
 
 ## Conventions

@@ -13,15 +13,20 @@
 		X-Content-Type-Options nosniff
 		X-Frame-Options DENY
 		Referrer-Policy same-origin
-		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'"
 		-Server
 	}
 
+	# The API and the /admin data browser set their own Content-Security-Policy.
 	handle /api/* {
 		reverse_proxy api:8000
 	}
 
+	handle /admin* {
+		reverse_proxy api:8000
+	}
+
 	handle {
+		header Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'"
 		root * /srv
 		try_files {path} /index.html
 		file_server

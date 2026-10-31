@@ -35,6 +35,12 @@ This creates one web service (API, frontend and background worker in one contain
 - Free databases expire after 30 days. Switch both `plan:` values to paid ones for anything longer-lived.
 - Every push to the default branch redeploys.
 
+## Admin data browser
+
+Superusers can browse all tables at `/admin` (there's an **Admin** link in the header). The bootstrap
+admin is a superuser automatically. Most tables are read-only. See
+[`docs/milestones/M2.5.md`](docs/milestones/M2.5.md).
+
 ## Develop
 
 ```sh

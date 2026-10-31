@@ -22,6 +22,9 @@ class User(IdMixin, CreatedAtMixin, Base):
     password_hash: Mapped[str] = mapped_column(String(255))
     # Platform staff (Jamie, brokers) may create projects. Project roles live in ProjectMember.
     is_staff: Mapped[bool] = mapped_column(Boolean, default=False)
+    # Can use the /admin data browser across all projects. Never editable in the UI:
+    # granted to the bootstrap admin on startup, or with `python -m katra.cli`.
+    is_superuser: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
 
