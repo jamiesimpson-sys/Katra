@@ -141,7 +141,7 @@ def invite_member(body: InviteIn, ctx: AdminOnly, request: Request, db: DbSessio
     )
     db.commit()
     return InviteCreated(
-        **InviteOut.model_validate(invite).model_dump(), invite_url=invite_url(token)
+        **InviteOut.model_validate(invite).model_dump(), invite_url=invite_url(token, request)
     )
 
 

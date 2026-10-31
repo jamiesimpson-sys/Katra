@@ -1,0 +1,34 @@
+# Render Blueprint: one web service (API + SPA + worker) and a Postgres database.
+# Deploy: https://render.com/deploy?repo=https://github.com/jamiesimpson-sys/Katra
+databases:
+  - name: katra-db
+    plan: free
+    databaseName: katra
+    user: katra
+    postgresMajorVersion: "16"
+    ipAllowList: []  # only reachable from Render services
+
+services:
+  - type: web
+    name: katra
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    envVars:
+      - key: KATRA_DATABASE_URL
+        fromDatabase:
+          name: katra-db
+          property: connectionString
+      # Asked for when you create the Blueprint. Password: 10+ characters.
+      - key: KATRA_BOOTSTRAP_ADMIN_EMAIL
+        sync: false
+      - key: KATRA_BOOTSTRAP_ADMIN_PASSWORD
+        sync: false
+      - key: KATRA_ENVIRONMENT
+        value: demo
+      - key: KATRA_LLM_PROVIDER
+        value: fake
+      - key: KATRA_EMBEDDING_PROVIDER
+        value: fake

@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pydantic import SecretStr
+from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -16,7 +16,10 @@ class Settings(BaseSettings):
     invite_ttl_hours: int = 72
     session_cookie_name: str = "katra_session"
     csrf_cookie_name: str = "katra_csrf"
-    public_base_url: str = "https://localhost:8443"
+    # Used in invite links. Unset = derive from the incoming request (works behind a proxy).
+    public_base_url: str | None = None
+    # If set, the API also serves the built SPA from here (single-container deploys).
+    static_dir: str | None = None
 
     login_max_attempts: int = 10
     login_window_seconds: int = 300
@@ -27,6 +30,16 @@ class Settings(BaseSettings):
 
     llm_provider: str = "fake"
     embedding_provider: str = "fake"
+
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def _use_psycopg_driver(cls, v: object) -> object:
+        # Hosting providers hand out postgres:// or postgresql:// URLs; we need psycopg 3.
+        if isinstance(v, str):
+            for prefix in ("postgres://", "postgresql://"):
+                if v.startswith(prefix):
+                    return "postgresql+psycopg://" + v[len(prefix) :]
+        return v
 
 
 @lru_cache

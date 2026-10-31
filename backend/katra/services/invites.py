@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from fastapi import Request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -27,8 +28,9 @@ def create_invite(db: Session, ctx: ProjectContext, email: str, role: Role) -> t
     return invite, token
 
 
-def invite_url(token: str) -> str:
-    return f"{get_settings().public_base_url.rstrip('/')}/invite/{token}"
+def invite_url(token: str, request: Request) -> str:
+    base = get_settings().public_base_url or str(request.base_url)
+    return f"{base.rstrip('/')}/invite/{token}"
 
 
 def find_open_invite(db: Session, token: str) -> Invite | None:

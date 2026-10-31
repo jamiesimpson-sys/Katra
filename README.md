@@ -20,6 +20,21 @@ make up      # first run creates .env with random secrets and prints the admin l
 Open <https://localhost:8443>. It uses a locally issued certificate, so accept the browser
 warning once. `make down` stops the stack; `docker compose down -v` also deletes its data.
 
+## Deploy to Render (works from a phone)
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/jamiesimpson-sys/Katra)
+
+1. Tap the button and sign in to Render with GitHub. Allow Render to access this repo when asked.
+2. Render reads [`render.yaml`](render.yaml). Fill in the two prompted values:
+   - `KATRA_BOOTSTRAP_ADMIN_EMAIL`: your login email.
+   - `KATRA_BOOTSTRAP_ADMIN_PASSWORD`: at least 10 characters.
+3. Tap **Deploy Blueprint**. The first build takes about 5–10 minutes. Then open the `katra` service and tap its `…onrender.com` URL.
+
+This creates one web service (API, frontend and background worker in one container) and a Postgres database. Render provides HTTPS. Notes on the free plan:
+- The service sleeps after about 15 minutes idle, so the first visit afterwards takes up to about a minute.
+- Free databases expire after 30 days. Switch both `plan:` values to paid ones for anything longer-lived.
+- Every push to the default branch redeploys.
+
 ## Develop
 
 ```sh
