@@ -42,3 +42,9 @@ def test_spa_serving(tmp_path):
     # No escaping the static directory.
     assert "nope" not in client.get("/..%2Fsecret.txt").text
     assert "nope" not in client.get("/../secret.txt").text
+
+
+def test_health_reports_live_commit(anon, monkeypatch):
+    assert anon.get("/api/health").json() == {"status": "ok", "commit": "dev"}
+    monkeypatch.setenv("RENDER_GIT_COMMIT", "03434f5abcdef0123")
+    assert anon.get("/api/health").json()["commit"] == "03434f5"

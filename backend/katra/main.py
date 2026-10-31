@@ -1,4 +1,5 @@
 import logging
+import os
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -56,7 +57,8 @@ def create_app() -> FastAPI:
     def health() -> dict[str, str]:
         with get_sessionmaker()() as db:
             db.execute(text("SELECT 1"))
-        return {"status": "ok"}
+        # Render sets RENDER_GIT_COMMIT, so the UI can show which commit is live.
+        return {"status": "ok", "commit": os.environ.get("RENDER_GIT_COMMIT", "")[:7] or "dev"}
 
     app.include_router(auth.router)
     app.include_router(invites.router)

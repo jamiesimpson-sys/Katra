@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
 import { useMe } from "../lib/auth";
@@ -7,6 +7,11 @@ export function Layout() {
   const { data: me } = useMe();
   const qc = useQueryClient();
   const navigate = useNavigate();
+  const health = useQuery({
+    queryKey: ["health"],
+    queryFn: () => api<{ status: string; commit: string }>("/api/health"),
+    staleTime: Infinity,
+  });
   const logout = useMutation({
     mutationFn: () => api("/api/auth/logout", { method: "POST" }),
     onSettled: () => {
@@ -35,6 +40,9 @@ export function Layout() {
       <main className="mx-auto max-w-6xl px-4 py-8">
         <Outlet />
       </main>
+      <footer className="mx-auto max-w-6xl px-4 pb-6 text-xs text-slate-400">
+        Katra prototype · build {health.data?.commit ?? "…"}
+      </footer>
     </div>
   );
 }
